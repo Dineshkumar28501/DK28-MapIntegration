@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1089587653102",
+    "project_id": "mapstask-3283f",
+    "storage_bucket": "mapstask-3283f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1089587653102:android:c844aac872fd1d279e06ff",
+        "android_client_info": {
+          "package_name": "com.example.maptask"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCe3u74q7xLdmaetiIqjIaectmmaSAIL0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
