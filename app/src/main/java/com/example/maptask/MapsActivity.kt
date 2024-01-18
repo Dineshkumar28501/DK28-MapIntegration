@@ -1,6 +1,7 @@
 package com.example.maptask
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
@@ -128,6 +129,29 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
 
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                fusedLocationClient.lastLocation
+                    .addOnSuccessListener { location: Location? ->
+                        location?.let {
+                            val currentLocation = LatLng(it.latitude, it.longitude)
+                            showCurrentLocation(currentLocation)
+                        }
+                    }
+            } else {
+                Toast.makeText(this@MapsActivity, "Permission is denied", Toast.LENGTH_SHORT).show()
+                finishAffinity()
+            }
+        }
     }
 
     private fun moveMarker(latLng: LatLng) {
