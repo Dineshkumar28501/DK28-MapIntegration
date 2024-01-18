@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -57,7 +56,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 LOCATION_PERMISSION_REQUEST_CODE
             )
         } else {
-            showCurrentLocation()
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    location?.let {
+                        val currentLocation = LatLng(it.latitude, it.longitude)
+                        showCurrentLocation(currentLocation)
+                    }
+                }
         }
 
         Places.initialize(applicationContext, getString(R.string.api_key))
@@ -82,7 +87,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         })
 
-
         val mapFragment =
             supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -93,31 +97,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.animateCamera(newLat)
     }
 
-    private fun showCurrentLocation() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
-                    location?.let {
-                        val defaultLocation = LatLng(it.latitude, it.longitude)
-                        selectedMarker = googleMap.addMarker(
-                            MarkerOptions().position(defaultLocation)
-                                .title("Selected location or current location")
-                        )
-                        googleMap.moveCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                defaultLocation,
-                                15f
-                            )
-                        )
-
-                    }
-                }
-        }
-
+    private fun showCurrentLocation(currentLocation: LatLng) {
+        selectedMarker = googleMap.addMarker(
+            MarkerOptions().position(currentLocation)
+                .title("Selected location or current location")
+        )
+        googleMap.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                currentLocation,
+                15f
+            )
+        )
     }
 
     override fun onMapReady(gMap: GoogleMap) {
@@ -142,7 +132,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun moveMarker(latLng: LatLng) {
         selectedMarker?.let {
-            // Update the marker's position
             it.position = latLng
             googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
             getAddressFromCoordinates(latLng)
@@ -164,7 +153,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             e.printStackTrace()
         }
     }
-
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
