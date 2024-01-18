@@ -134,11 +134,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         selectedMarker?.let {
             it.position = latLng
             googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
-            getAddressFromCoordinates(latLng)
+            getAddress(latLng)
         }
     }
 
-    private fun getAddressFromCoordinates(latLng: LatLng) {
+    private fun getAddress(latLng: LatLng) {
         val geocoder = Geocoder(this, Locale.getDefault())
 
         try {
